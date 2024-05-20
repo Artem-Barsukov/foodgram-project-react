@@ -57,8 +57,8 @@ class CustomUserViewSet(UserViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-            detail=False,
-            permission_classes=[IsAuthenticated]
+        detail=False,
+        permission_classes=[IsAuthenticated]
     )
     def subscriptions(self, request):
         """Функция вывода всех подписок."""

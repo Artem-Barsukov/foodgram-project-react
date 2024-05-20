@@ -1,4 +1,3 @@
-from django.db import transaction
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
@@ -48,7 +47,7 @@ class SubscribeListSerializer(CustomUserSerializer):
     recipes_count = SerializerMethodField()
     recipes = SerializerMethodField()
 
-    class Meta(CustomUserSerializer.Meta):        
+    class Meta(CustomUserSerializer.Meta):
         fields = (
             'email', 'id', 'username', 'first_name', 'last_name',
             'is_subscribed', 'recipes', 'recipes_count',
@@ -191,7 +190,7 @@ class RecipeCreateSerializer(ModelSerializer):
             raise serializers.ValidationError(
                 'Нужно указать как минимум 1 тэг'
             )
-        uniqe_tags = set(tag.id for tag in tags)        
+        uniqe_tags = set(tag.id for tag in tags)
         if len(tags) != len(uniqe_tags):
             raise serializers.ValidationError(
                 'Тэги в рецепте не должны повторяться')
