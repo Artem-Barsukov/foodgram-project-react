@@ -1,7 +1,7 @@
+from django.db.models import Exists, OuterRef
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from rest_framework.decorators import action
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
@@ -10,9 +10,11 @@ from rest_framework.status import (HTTP_201_CREATED, HTTP_204_NO_CONTENT,
                                    HTTP_400_BAD_REQUEST)
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
+from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
+
 from .filters import IngredientNameFilter, RecipeFilter
-from .pagination import CustomPagination
-from .permissions import IsAdminOrAuthorOrReadOnly
+from .pagination import LimitPagesPagination
+from .permissions import AuthorOrReadOnly
 from .serializers import (IngredientSerializer, RecipeCreateSerializer,
                           RecipeReadSerializer, ShortViewRecipeSerializer,
                           TagSerializer)
@@ -24,7 +26,7 @@ class TagViewSet(ReadOnlyModelViewSet):
 
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, )
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     pagination_class = None
 
 
@@ -40,12 +42,24 @@ class IngredientsViewSet(ReadOnlyModelViewSet):
 
 class RecipeViewSet(ModelViewSet):
     """Вьюсет для рецептов."""
-
-    queryset = Recipe.objects.all()
-    permission_classes = (IsAuthenticatedOrReadOnly, IsAdminOrAuthorOrReadOnly)
-    pagination_class = CustomPagination
+    
+    permission_classes = (IsAuthenticatedOrReadOnly, AuthorOrReadOnly)
+    pagination_class = LimitPagesPagination
     filterset_class = RecipeFilter
-    filter_backends = (DjangoFilterBackend, )
+    filter_backends = (DjangoFilterBackend,)
+
+    def get_queryset(self):
+        queryset = Recipe.objects.all()
+        user = self.request.user
+        if user.is_authenticated:
+            if self.action in ['list', 'retrieve']:
+                favorited = Favorite.objects.filter(recipe=OuterRef('pk'),
+                                                    user=user)
+                shopcart = ShoppingCart.objects.filter(recipe=OuterRef('pk'),
+                                                       user=user)
+                queryset = queryset.annotate(is_favorited=Exists(favorited),
+                                             is_in_shopping_cart=Exists(shopcart))
+        return queryset
 
     def get_serializer_class(self):
         """Возвращает сериализатор в зависимости от действия."""

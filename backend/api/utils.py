@@ -1,5 +1,6 @@
 from django.db.models import F, Sum
 from django.http.response import HttpResponse
+
 from recipes.models import IngredientRecipe, Recipe
 
 

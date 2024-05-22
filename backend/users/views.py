@@ -1,5 +1,3 @@
-from api.pagination import CustomPagination
-from api.serializers import CustomUserSerializer, SubscribeListSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
@@ -8,6 +6,9 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
+from api.pagination import LimitPagesPagination
+from api.serializers import UserSerializer, SubscribeListSerializer
+
 from .models import Follow, User
 
 
@@ -15,8 +16,8 @@ class CustomUserViewSet(UserViewSet):
     """Вьюсет пользователя."""
 
     queryset = User.objects.all()
-    serializer_class = CustomUserSerializer
-    pagination_class = CustomPagination
+    serializer_class = UserSerializer
+    pagination_class = LimitPagesPagination
     permission_classes = (AllowAny,)
 
     @action(
