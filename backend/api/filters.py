@@ -11,7 +11,6 @@ class RecipeFilter(FilterSet):
         queryset=Tag.objects.all(),
     )
     author = filters.CharFilter()
-    # is_favorited = filters.NumberFilter(method='filter_is_favorited')
     is_favorited = filters.BooleanFilter(method='filter_is_favorited')
     is_in_shopping_cart = filters.BooleanFilter(
         method='filter_is_in_shopping_cart'

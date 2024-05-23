@@ -2,7 +2,7 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 
 class AuthorOrReadOnly(BasePermission):
-    """Редактирование доступно только автору."""
+    """Editing is available only to the author."""
 
     def has_object_permission(self, request, view, obj):
         return (request.method in SAFE_METHODS

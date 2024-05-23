@@ -2,6 +2,6 @@ from rest_framework.pagination import PageNumberPagination
 
 
 class LimitPagesPagination(PageNumberPagination):
-    """Переопределяем название поля."""
+    """Redefining the field name."""
 
     page_size_query_param = 'limit'

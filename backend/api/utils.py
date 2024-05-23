@@ -1,11 +1,11 @@
 from django.db.models import F, Sum
-from django.http.response import HttpResponse
+from django.http import FileResponse
 
 from recipes.models import IngredientRecipe, Recipe
 
 
 def download_cart(user):
-    """Функция вывода списка ингридиентов для покупки на печать."""
+    """Download the shopping list."""
     recipes = Recipe.objects.filter(shopping_cart__user=user)
     shopping_cart = IngredientRecipe.objects.filter(
         recipe__in=recipes).values(
@@ -21,7 +21,7 @@ def download_cart(user):
             f'{ingredient["name"]}: '
             f'{ingredient["total"]}'
             f'{ingredient["units"]}.\n')
-    file = 'shopping_list.txt'
-    response = HttpResponse(shopping_list, content_type='text/plain')
-    response['Content-Disposition'] = f'attachment; filename="{file}.txt"'
+    response = FileResponse(shopping_list)
+    response['content-type'] = 'application/msword'
+    response['Content-Disposition'] = 'attachment; filename="shop_list.doc"'
     return response

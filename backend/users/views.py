@@ -7,13 +7,12 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from api.pagination import LimitPagesPagination
-from api.serializers import UserSerializer, SubscribeListSerializer
+from api.serializers import SubscribeListSerializer, UserSerializer
 
 from .models import Follow, User
 
 
 class CustomUserViewSet(UserViewSet):
-    """Вьюсет пользователя."""
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -35,7 +34,6 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=[IsAuthenticated]
     )
     def subscribe(self, request, id):
-        """Функция добавления и удаления подписки."""
         user = request.user
         author = get_object_or_404(User, pk=id)
 
@@ -62,7 +60,6 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=[IsAuthenticated]
     )
     def subscriptions(self, request):
-        """Функция вывода всех подписок."""
         user = request.user
         queryset = User.objects.filter(author__user=user)
         pages = self.paginate_queryset(queryset)

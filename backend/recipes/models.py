@@ -8,7 +8,6 @@ from users.models import User
 
 
 class Tag(models.Model):
-    """Тэг."""
 
     name = models.CharField(
         max_length=MAX_LENGHT_RECIPES,
@@ -32,7 +31,6 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    """Ингредиент."""
 
     name = models.CharField(
         max_length=MAX_LENGHT_RECIPES,
@@ -56,7 +54,6 @@ class Ingredient(models.Model):
 
 
 class Recipe(models.Model):
-    """Рецепт."""
 
     author = models.ForeignKey(
         User,
@@ -103,7 +100,6 @@ class Recipe(models.Model):
 
 
 class IngredientRecipe(models.Model):
-    """Связь ингредиента с рецептом."""
 
     ingredient = models.ForeignKey(
         Ingredient,
@@ -130,7 +126,6 @@ class IngredientRecipe(models.Model):
 
 
 class Favorite(models.Model):
-    """Избранные рецепты."""
 
     user = models.ForeignKey(
         User,
@@ -158,7 +153,7 @@ class Favorite(models.Model):
 
 
 class ShoppingCart(models.Model):
-    """Список покупок"""
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

@@ -7,7 +7,6 @@ from foodgram.constants import MAX_LENGTH_NAME
 
 
 class User(AbstractUser):
-    """Собственная модель пользователя."""
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ('username', 'first_name', 'last_name', )
@@ -42,7 +41,6 @@ class User(AbstractUser):
 
 
 class Follow(models.Model):
-    """Модель подписок пользователя."""
 
     user = models.ForeignKey(
         User,
