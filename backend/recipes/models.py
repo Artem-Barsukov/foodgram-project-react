@@ -1,6 +1,7 @@
-from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator
 from django.db import models
+
+from colorfield.fields import ColorField
 
 from foodgram.constants import (MAX_LENGHT_COLOR, MAX_LENGHT_RECIPES,
                                 MIN_COOKING_TIME, MIN_INGREDIENT)

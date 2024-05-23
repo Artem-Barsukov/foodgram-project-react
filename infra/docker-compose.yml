@@ -31,11 +31,12 @@ services:
       - static:/static/
 
   nginx:
-    image: nginx:1.19.3
+    build:
+      context: ../nginx
+      dockerfile: Dockerfile
     ports:
       - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    volumes:      
       - ../frontend/build:/usr/share/nginx/html/
       - ../docs/:/usr/share/nginx/html/api/docs/
       - static:/static/
