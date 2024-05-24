@@ -1,7 +1,7 @@
 from django.db import transaction
-from django.shortcuts import get_object_or_404
 
-from djoser.serializers import UserCreateSerializer
+from djoser.serializers import \
+    UserCreateSerializer as DjoserCreateUserSerializer
 from djoser.serializers import UserSerializer as DjoserUserSerialiser
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
@@ -15,7 +15,7 @@ from recipes.models import Ingredient, IngredientRecipe, Recipe, Tag
 from users.models import User
 
 
-class CustomUserCreateSerializer(UserCreateSerializer):
+class UserCreateSerializer(DjoserCreateUserSerializer):
 
     class Meta:
         model = User
@@ -55,11 +55,9 @@ class SubscribeListSerializer(UserSerializer):
         read_only_fields = ('email', 'username', 'first_name', 'last_name')
 
     def validate(self, data):
-        author_id = self.context.get(
-            'request').parser_context.get('kwargs').get('id')
-        author = get_object_or_404(User, id=author_id)
-        user = self.context.get('request').user
-        if user.follower.filter(author=author_id).exists():
+        author = self.instance
+        user = user = self.context.get('request').user
+        if user.follower.filter(author=author).exists():
             raise ValidationError('Подписка уже существует')
         if user == author:
             raise ValidationError('Нельзя подписаться на самого себя')
