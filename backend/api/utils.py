@@ -1,3 +1,5 @@
+from io import BytesIO
+
 from django.db.models import F, Sum
 from django.http import FileResponse
 
@@ -21,7 +23,6 @@ def download_cart(user):
             f'{ingredient["name"]}: '
             f'{ingredient["total"]}'
             f'{ingredient["units"]}.\n')
-    response = FileResponse(shopping_list)
-    response['content-type'] = 'application/msword'
-    response['Content-Disposition'] = 'attachment; filename="shop_list.doc"'
-    return response
+    buffer = BytesIO(shopping_list.encode('utf8'))
+    return FileResponse(buffer, filename='shopping_list.txt',
+                        as_attachment=True)

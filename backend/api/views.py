@@ -1,5 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists
 from django.shortcuts import get_object_or_404
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -39,7 +39,8 @@ class IngredientsViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    filter_backends = (IngredientNameFilter, )
+    filter_backends = (IngredientNameFilter,)
+    search_fields = ('^name',)
     pagination_class = None
 
 
@@ -55,17 +56,14 @@ class RecipeViewSet(ModelViewSet):
             Recipe
             .objects
             .select_related('author')
-            .prefetch_related('ingredients')
+            .prefetch_related('ingredients', 'tags')
         )
         user = self.request.user
         if user.is_authenticated and self.action in ['list', 'retrieve']:
             queryset = queryset.annotate(
-                is_favorited=Exists(Favorite.objects.filter(
-                    recipe=OuterRef('pk'),
-                    user=user)),
-                is_in_shopping_cart=Exists(ShoppingCart.objects.filter(
-                    recipe=OuterRef('pk'),
-                    user=user)))
+                is_favorited=Exists(Favorite.objects.get_favorited(user)),
+                is_in_shopping_cart=Exists(ShoppingCart.objects.get_cart(user))
+            )
         return queryset
 
     def get_serializer_class(self):

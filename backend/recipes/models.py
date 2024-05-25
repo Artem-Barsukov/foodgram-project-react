@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import OuterRef
 
 from colorfield.fields import ColorField
 
@@ -126,6 +127,12 @@ class IngredientRecipe(models.Model):
         return f'{self.ingredient} {self.recipe}'
 
 
+class FavoriteQuerySet(models.QuerySet):
+
+    def get_favorited(self, user):
+        return self.filter(recipe=OuterRef('pk'), user=user)
+
+
 class Favorite(models.Model):
 
     user = models.ForeignKey(
@@ -141,6 +148,8 @@ class Favorite(models.Model):
         verbose_name='Рецепт'
     )
 
+    objects = FavoriteQuerySet.as_manager()
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -151,6 +160,12 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f'{self.user} {self.recipe}'
+
+
+class ShoppingCartQuerySet(models.QuerySet):
+
+    def get_cart(self, user):
+        return self.filter(recipe=OuterRef('pk'), user=user)
 
 
 class ShoppingCart(models.Model):
@@ -165,6 +180,8 @@ class ShoppingCart(models.Model):
         on_delete=models.CASCADE,
         related_name='shopping_cart'
     )
+
+    objects = ShoppingCartQuerySet.as_manager()
 
     def __str__(self):
         return f'{self.user} {self.recipe}'

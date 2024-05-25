@@ -1,7 +1,7 @@
 from django.db import transaction
 
-from djoser.serializers import \
-    UserCreateSerializer as DjoserCreateUserSerializer
+from djoser.serializers import (
+    UserCreateSerializer as DjoserCreateUserSerializer)
 from djoser.serializers import UserSerializer as DjoserUserSerialiser
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
